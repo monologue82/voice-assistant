@@ -33,42 +33,15 @@ class VoiceAccessibilityService : AccessibilityService() {
         originalClipboard = clipboard.primaryClip
 
         try {
-            // 检测当前输入法是否为CJK
-            val isCJK = isCurrentInputMethodCJK()
-            if (isCJK) {
-                // 临时切换到ASCII键盘
-                switchToAsciiKeyboard()
-            }
-
             // 将文本放入剪贴板
             val clip = ClipData.newPlainText("voice_input", text)
             clipboard.setPrimaryClip(clip)
-
-            // 执行粘贴操作
-            performGlobalAction(AccessibilityService.GLOBAL_ACTION_PASTE)
         } finally {
             // 恢复原始剪贴板内容
             if (originalClipboard != null) {
                 clipboard.setPrimaryClip(originalClipboard!!)
             }
         }
-    }
-
-    private fun isCurrentInputMethodCJK(): Boolean {
-        // 这里可以实现检测当前输入法是否为CJK的逻辑
-        // 简化实现，实际项目中可能需要更复杂的检测
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        val currentInputMethod = inputMethodManager.currentInputMethodSubtype
-        return currentInputMethod?.language?.startsWith("zh") == true ||
-               currentInputMethod?.language?.startsWith("ja") == true ||
-               currentInputMethod?.language?.startsWith("ko") == true
-    }
-
-    private fun switchToAsciiKeyboard() {
-        // 这里可以实现切换到ASCII键盘的逻辑
-        // 简化实现，实际项目中可能需要更复杂的处理
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        // 尝试切换到美式英语键盘
     }
 
     private fun findFocusedEditText(): AccessibilityNodeInfo? {

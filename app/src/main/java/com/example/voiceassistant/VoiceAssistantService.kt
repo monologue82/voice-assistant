@@ -10,9 +10,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.view.LayoutInflater
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -208,7 +210,7 @@ class VoiceAssistantService : Service(), RecognitionListener {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        val view = layoutInflater.inflate(R.layout.floating_recording_window, recordingWindow)
+        val view = LayoutInflater.from(this).inflate(R.layout.floating_recording_window, recordingWindow)
         waveformBars = arrayOf(
             view.findViewById(R.id.waveform_bar_1),
             view.findViewById(R.id.waveform_bar_2),
@@ -248,9 +250,10 @@ class VoiceAssistantService : Service(), RecognitionListener {
         val heights = arrayOf(0.5f, 0.8f, 1.0f, 0.75f, 0.55f)
         for (i in waveformBars.indices) {
             val height = (heights[i] * rms * 0.8f + 0.2f) * 100
+            val parentView = waveformBars[i].parent as View
             waveformBars[i].layoutParams = LinearLayout.LayoutParams(
                 waveformBars[i].layoutParams.width,
-                (height * waveformBars[i].parent.height / 100).toInt()
+                (height * parentView.height / 100).toInt()
             )
         }
     }
