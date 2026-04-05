@@ -16,12 +16,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            // debug版本自动使用Android SDK的debug签名
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // release版本也使用debug签名，方便测试安装
+            signingConfig = signingConfigs.findByName("debug")
         }
     }
     compileOptions {
