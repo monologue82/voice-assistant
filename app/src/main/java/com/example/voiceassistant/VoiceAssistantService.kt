@@ -95,7 +95,7 @@ class VoiceAssistantService : Service(), RecognitionListener {
         return NotificationCompat.Builder(this, "voice_assistant_channel")
             .setContentTitle("Voice Assistant")
             .setContentText(status)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .build()
     }
