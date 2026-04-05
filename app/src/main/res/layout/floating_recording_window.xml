@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="@drawable/recording_window_background">
+
+    <LinearLayout
+        android:id="@+id/waveform_container"
+        android:layout_width="44dp"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginRight="12dp">
+
+        <View
+            android:id="@+id/waveform_bar_1"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:background="@color/white" />
+
+        <View
+            android:id="@+id/waveform_bar_2"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:background="@color/white" />
+
+        <View
+            android:id="@+id/waveform_bar_3"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:background="@color/white" />
+
+        <View
+            android:id="@+id/waveform_bar_4"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:background="@color/white" />
+
+        <View
+            android:id="@+id/waveform_bar_5"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:background="@color/white" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_transcript"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="160dp"
+        android:maxWidth="560dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>
