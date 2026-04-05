@@ -7,22 +7,56 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
+    
+    private lateinit var spinnerLanguage: Spinner
+    private lateinit var switchLlmRefinement: Switch
+    private lateinit var etApiBaseUrl: EditText
+    private lateinit var etApiKey: EditText
+    private lateinit var etModel: EditText
+    private lateinit var btnEnableOverlay: Button
+    private lateinit var btnEnableAccessibility: Button
+    private lateinit var btnStartService: Button
+    private lateinit var btnStopService: Button
+    private lateinit var btnSave: Button
+    private lateinit var btnTestApi: Button
+    private lateinit var btnResetPosition: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         sharedPreferences = getSharedPreferences("voice_assistant", MODE_PRIVATE)
+        
+        // 初始化视图引用
+        initViews()
 
         setupLanguageSpinner()
         loadSettings()
         setupClickListeners()
+    }
+    
+    private fun initViews() {
+        spinnerLanguage = findViewById(R.id.spinner_language)
+        switchLlmRefinement = findViewById(R.id.switch_llm_refinement)
+        etApiBaseUrl = findViewById(R.id.et_api_base_url)
+        etApiKey = findViewById(R.id.et_api_key)
+        etModel = findViewById(R.id.et_model)
+        btnEnableOverlay = findViewById(R.id.btn_enable_overlay)
+        btnEnableAccessibility = findViewById(R.id.btn_enable_accessibility)
+        btnStartService = findViewById(R.id.btn_start_service)
+        btnStopService = findViewById(R.id.btn_stop_service)
+        btnSave = findViewById(R.id.btn_save)
+        btnTestApi = findViewById(R.id.btn_test_api)
+        btnResetPosition = findViewById(R.id.btn_reset_position)
     }
 
     private fun setupLanguageSpinner() {
@@ -35,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         )
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner_language.adapter = adapter
+        spinnerLanguage.adapter = adapter
 
         val savedLanguage = sharedPreferences.getString("language", "zh-CN")
         val position = when (savedLanguage) {
@@ -46,18 +80,18 @@ class MainActivity : AppCompatActivity() {
             "ko-KR" -> 4
             else -> 1
         }
-        spinner_language.setSelection(position)
+        spinnerLanguage.setSelection(position)
     }
 
     private fun loadSettings() {
-        switch_llm_refinement.isChecked = sharedPreferences.getBoolean("llm_refinement_enabled", false)
-        et_api_base_url.setText(sharedPreferences.getString("api_base_url", ""))
-        et_api_key.setText(sharedPreferences.getString("api_key", ""))
-        et_model.setText(sharedPreferences.getString("model", "gpt-3.5-turbo"))
+        switchLlmRefinement.isChecked = sharedPreferences.getBoolean("llm_refinement_enabled", false)
+        etApiBaseUrl.setText(sharedPreferences.getString("api_base_url", ""))
+        etApiKey.setText(sharedPreferences.getString("api_key", ""))
+        etModel.setText(sharedPreferences.getString("model", "gpt-3.5-turbo"))
     }
 
     private fun setupClickListeners() {
-        btn_enable_overlay.setOnClickListener {
+        btnEnableOverlay.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
@@ -68,12 +102,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btn_enable_accessibility.setOnClickListener {
+        btnEnableAccessibility.setOnClickListener {
             val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
             startActivity(intent)
         }
 
-        btn_start_service.setOnClickListener {
+        btnStartService.setOnClickListener {
             val intent = Intent(this, VoiceAssistantService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent)
@@ -83,28 +117,28 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show()
         }
 
-        btn_stop_service.setOnClickListener {
+        btnStopService.setOnClickListener {
             val intent = Intent(this, VoiceAssistantService::class.java)
             stopService(intent)
             Toast.makeText(this, "Service stopped", Toast.LENGTH_SHORT).show()
         }
 
-        btn_save.setOnClickListener {
+        btnSave.setOnClickListener {
             saveSettings()
         }
 
-        btn_test_api.setOnClickListener {
+        btnTestApi.setOnClickListener {
             testApi()
         }
 
-        btn_reset_position.setOnClickListener {
+        btnResetPosition.setOnClickListener {
             sharedPreferences.edit().putInt("floating_button_x", 100).putInt("floating_button_y", 300).apply()
             Toast.makeText(this, "Floating button position reset", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun saveSettings() {
-        val language = when (spinner_language.selectedItemPosition) {
+        val language = when (spinnerLanguage.selectedItemPosition) {
             0 -> "en-US"
             1 -> "zh-CN"
             2 -> "zh-TW"
@@ -115,19 +149,19 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences.edit()
             .putString("language", language)
-            .putBoolean("llm_refinement_enabled", switch_llm_refinement.isChecked)
-            .putString("api_base_url", et_api_base_url.text.toString())
-            .putString("api_key", et_api_key.text.toString())
-            .putString("model", et_model.text.toString())
+            .putBoolean("llm_refinement_enabled", switchLlmRefinement.isChecked)
+            .putString("api_base_url", etApiBaseUrl.text.toString())
+            .putString("api_key", etApiKey.text.toString())
+            .putString("model", etModel.text.toString())
             .apply()
 
         Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show()
     }
 
     private fun testApi() {
-        val apiBaseUrl = et_api_base_url.text.toString()
-        val apiKey = et_api_key.text.toString()
-        val model = et_model.text.toString()
+        val apiBaseUrl = etApiBaseUrl.text.toString()
+        val apiKey = etApiKey.text.toString()
+        val model = etModel.text.toString()
 
         if (apiBaseUrl.isEmpty() || apiKey.isEmpty() || model.isEmpty()) {
             Toast.makeText(this, "Please fill all API fields", Toast.LENGTH_SHORT).show()
