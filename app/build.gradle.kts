@@ -15,9 +15,19 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("debug") {
+            val debugKeystorePath = System.getenv("HOME") + "/.android/debug.keystore"
+            storeFile = file(debugKeystorePath)
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         debug {
-            // debug版本自动使用Android SDK的debug签名
+            signingConfig = signingConfigs.getByName("debug")
         }
         release {
             isMinifyEnabled = false
@@ -25,8 +35,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // release版本也使用debug签名，方便测试安装
-            signingConfig = signingConfigs.findByName("debug")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
